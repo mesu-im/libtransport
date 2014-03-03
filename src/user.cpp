@@ -379,6 +379,12 @@ void User::handlePresence(Swift::Presence::ref presence, bool forceJoin) {
 		Swift::Presence::ref highest = m_presenceOracle->getHighestPriorityPresence(m_jid.toBare());
 		if (highest) {
 			if (highest->getType() == Swift::Presence::Unavailable && getUserSetting("stay_connected") == "1") {
+				if (getUserSetting("xa_when_offline") == "1") {
+					highest->setType(Swift::Presence::Available);
+					highest->setShow(Swift::StatusShow::XA);
+					onRawPresenceReceived(highest);
+				}
+
 				m_resources = 0;
 				m_conversationManager->clearJIDs();
 				setCacheMessages(true);
