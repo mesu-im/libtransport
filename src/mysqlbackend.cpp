@@ -348,6 +348,7 @@ bool MySQLBackend::connect() {
 
 	m_setUserOnline = new Statement(&m_conn, "bi", "UPDATE " + m_prefix + "users SET online=?, last_login=NOW()  WHERE id=?");
 	m_getOnlineUsers = new Statement(&m_conn, "|s", "SELECT jid FROM " + m_prefix + "users WHERE online=1");
+	m_getAllUsers = new Statement(&m_conn, "|s", "SELECT jid FROM " + m_prefix + "users");
 
 	return true;
 }
@@ -476,6 +477,20 @@ bool MySQLBackend::getOnlineUsers(std::vector<std::string> &users) {
 	std::string jid;
 	while (m_getOnlineUsers->fetch() == 0) {
 		*m_getOnlineUsers >> jid;
+		users.push_back(jid);
+	}
+
+	return true;
+}
+
+bool MySQLBackend::getAllUsers(std::vector<std::string> &users) {
+	EXEC(m_getAllUsers, getAllUsers(users));
+	if (!exec_ok)
+		return false;
+
+	std::string jid;
+	while (m_getAllUsers->fetch() == 0) {
+		*m_getAllUsers >> jid;
 		users.push_back(jid);
 	}
 

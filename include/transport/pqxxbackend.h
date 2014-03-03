@@ -82,6 +82,7 @@ class PQXXBackend : public StorageBackend
 		bool getBuddies(long id, std::list<BuddyInfo> &roster);
 
 		bool getOnlineUsers(std::vector<std::string> &users);
+		bool getAllUsers(std::vector<std::string> &users);
 
 		long addBuddy(long userId, const BuddyInfo &buddyInfo);
 

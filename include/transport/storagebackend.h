@@ -122,6 +122,8 @@ class StorageBackend
 
 		/// getOnlineUsers
 		virtual bool getOnlineUsers(std::vector<std::string> &users) = 0;
+		/// getAllUsers
+		virtual bool getAllUsers(std::vector<std::string> &users) = 0;
 
 		virtual long addBuddy(long userId, const BuddyInfo &buddyInfo) = 0;
 		virtual void updateBuddy(long userId, const BuddyInfo &buddyInfo) = 0;

@@ -82,6 +82,7 @@ class MySQLBackend : public StorageBackend
 		bool getBuddies(long id, std::list<BuddyInfo> &roster);
 
 		bool getOnlineUsers(std::vector<std::string> &users);
+		bool getAllUsers(std::vector<std::string> &users);
 
 		long addBuddy(long userId, const BuddyInfo &buddyInfo);
 
@@ -156,6 +157,7 @@ class MySQLBackend : public StorageBackend
 		Statement *m_getBuddiesSettings;
 		Statement *m_setUserOnline;
 		Statement *m_getOnlineUsers;
+		Statement *m_getAllUsers;
 };
 
 }

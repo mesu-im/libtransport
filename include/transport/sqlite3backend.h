@@ -70,6 +70,7 @@ class SQLite3Backend : public StorageBackend
 		void setUserOnline(long id, bool online);
 
 		bool getOnlineUsers(std::vector<std::string> &users);
+		bool getAllUsers(std::vector<std::string> &users);
 
 		/// Removes user and all connected data from database.
 		/// \param id id of user - UserInfo.id
@@ -123,6 +124,7 @@ class SQLite3Backend : public StorageBackend
 		sqlite3_stmt *m_getBuddiesSettings;
 		sqlite3_stmt *m_setUserOnline;
 		sqlite3_stmt *m_getOnlineUsers;
+		sqlite3_stmt *m_getAllUsers;
 };
 
 }
