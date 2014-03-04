@@ -45,6 +45,8 @@ UsersReconnecter::UsersReconnecter(Component *component, StorageBackend *storage
 	m_nextUserTimer->onTick.connect(boost::bind(&UsersReconnecter::reconnectNextUser, this));
 
 	m_component->onConnected.connect(bind(&UsersReconnecter::handleConnected, this));
+
+	m_config = m_component->getConfig();
 }
 
 UsersReconnecter::~UsersReconnecter() {
@@ -59,20 +61,45 @@ void UsersReconnecter::reconnectNextUser() {
 		return;
 	}
 
-	std::string user = m_users.back();
+	std::string jid = m_users.back();
 	m_users.pop_back();
 
-	LOG4CXX_INFO(logger, "Sending probe presence to " << user);
-	Swift::Presence::ref response = Swift::Presence::create();
-	try {
-		response->setTo(user);
-	}
-	catch (...) { return; }
-	
-	response->setFrom(m_component->getJID());
-	response->setType(Swift::Presence::Probe);
+	if (CONFIG_BOOL(m_config, "service.reconnect_on_start")) {
+	    UserInfo userInfo;
+	    bool registered = m_storageBackend ? m_storageBackend->getUser(jid, userInfo) : false;
 
-	m_component->getStanzaChannel()->sendPresence(response);
+	    if (registered) {                
+		std::string value = "1";
+		int type = (int) TYPE_BOOLEAN;
+		m_storageBackend->getUserSetting(userInfo.id, "stay_connected", type, value);
+
+		if (value == "1") {
+		    LOG4CXX_INFO(logger, "Reconnecting user " << jid);
+		    Swift::Presence::ref presence = Swift::Presence::create();
+		    presence->setTo(m_component->getJID());
+		    presence->setFrom(jid);
+		    presence->setType(Swift::Presence::Available);
+		    m_component->onUserPresenceReceived(presence);
+		} else {
+			LOG4CXX_INFO(logger, "Skipping user " << jid << " (stay_connected != 1)");
+		}
+	    } else {
+		LOG4CXX_INFO(logger, "Unknown user " << jid);
+	    }
+	} else {
+	    LOG4CXX_INFO(logger, "Sending probe presence to " << jid);
+	    Swift::Presence::ref response = Swift::Presence::create();
+	    try {
+		response->setTo(jid);
+	    }
+	    catch (...) { return; }
+
+	    response->setFrom(m_component->getJID());
+	    response->setType(Swift::Presence::Probe);
+
+	    m_component->getStanzaChannel()->sendPresence(response);
+	}
+        
 	m_nextUserTimer->start();
 }
 
@@ -83,8 +110,12 @@ void UsersReconnecter::handleConnected() {
 	LOG4CXX_INFO(logger, "Starting UserReconnecter.");
 	m_started = true;
 
-	m_storageBackend->getOnlineUsers(m_users);
-
+	if (CONFIG_BOOL(m_config, "service.reconnect_on_start")) {
+		m_storageBackend->getAllUsers(m_users);
+	} else {
+		m_storageBackend->getOnlineUsers(m_users);
+	}
+	
 	reconnectNextUser();
 }
 

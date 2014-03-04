@@ -102,6 +102,7 @@ bool Config::load(std::istream &ifs, boost::program_options::options_description
 		("service.jid_escaping", value<bool>()->default_value(true), "")
 		("service.vip_only", value<bool>()->default_value(false), "")
 		("service.vip_message", value<std::string>()->default_value(""), "")
+		("service.reconnect_on_start", value<bool>()->default_value(false), "Connect all users with 'stay_connected' == 1 on start.")
 		("vhosts.vhost", value<std::vector<std::string> >()->multitoken(), "")
 		("identity.name", value<std::string>()->default_value("Spectrum 2 Transport"), "Name showed in service discovery.")
 		("identity.category", value<std::string>()->default_value("gateway"), "Disco#info identity category. 'gateway' by default.")

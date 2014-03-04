@@ -24,6 +24,7 @@
 #include <algorithm>
 #include <vector>
 
+#include "transport/config.h"
 #include "Swiften/Network/Timer.h"
 
 namespace Transport {
@@ -52,6 +53,7 @@ class UsersReconnecter {
 		bool m_started;
 		std::vector<std::string> m_users;
 		Swift::Timer::ref m_nextUserTimer;
+                Config *m_config;
 };
 
 }
