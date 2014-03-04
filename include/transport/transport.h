@@ -187,7 +187,7 @@ namespace Transport {
 			Transport::UserRegistry *m_userRegistry;
 			StorageBackend *m_storageBackend;
 			int m_reconnectCount;
-			Config* m_config;
+			Config *m_config;
 			std::string m_protocol;
 			Swift::JID m_jid;
 			Factory *m_factory;
