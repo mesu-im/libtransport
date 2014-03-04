@@ -53,7 +53,7 @@ SettingsAdHocCommand::SettingsAdHocCommand(Component *component, UserManager *us
 
 	field = Swift::BooleanFormField::create(CONFIG_STRING_DEFAULTED(component->getConfig(), "settings.xa_when_offline", "0") == "1");
 	field->setName("xa_when_offline");
-	field->setLabel("Set XA status when offline on XMPP");
+	field->setLabel("Set XA status when offline on XMPP (requires 'Stay connected')");
 	addFormField(field);
 }
 
